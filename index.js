@@ -11,6 +11,47 @@ const Intern = require('./lib/intern.js');
 const Engineer = require('./lib/engineer.js');
 const Manager = require('./lib/manager.js');
 
+// needs to create a new manager object
+ function saveManager(response){
+     let newMgr = new Manager();
+    console.log(newMgr);
+ };
+
+// needs to create a new engineer object
+// function saveEngineer(){
+//   let newEng = new Engineer(name, id, email, gitHub);
+//}
+
+// needs to create a new intern object
+    // function saveIntern(){
+    // let newInt = new Intern(name, id, email, school);
+    // }
+// saveIntern();
+
+// writes the HTML template to a new file named "My Team" - needs to run after user is done entering employees
+function writeIt(response){
+    // the html template
+    const cardTemplate =
+        `<div class="card shadow mb-5 mt-5 m-1 bg-white rounded" style="width: 18rem;">
+        <div class="card-body rounded"
+            style="background-color:rgb(158, 158, 235);
+            color:white">
+                <h4 class="card-title p-1">${response.name}</h4>
+                <h5 class="card-text">(icon)${response.role}</h5>
+        </div>
+            <ul class="list-group list-group-flush p-3">
+                <li class="list-group-item">ID: ${response.id}</li>
+                <a href="mailto: ${response.email}"><li class="list-group-item">Email: ${response.email}</li></a>
+                <li class="list-group-item">(office #, github, or school)</li>
+            </ul>
+        </div>`
+
+     fs.appendFile('test.html', cardTemplate, err => {
+     // Logs an error in the terminal if one occurs
+     if (err) console.err(err);
+     // Success message in the terminal
+     else console.log("Success! Your team's contact info has been generated and saved as My Team.html!")})
+}
 
 // starts the inquirer prompts and chooses an employee's role
 function startPrompts(){
@@ -28,10 +69,9 @@ function startPrompts(){
         // calls the intern prompts if the user selects Intern
         } else if (response.choices === 'Intern') {
             promptIntern();
-        } else {
-            promptManager();
-           // console.log(response);
-        }
+        } else promptManager();
+        })
+    }
 
 // the manager inquirer prompts
 function promptManager() {
@@ -60,64 +100,33 @@ function promptManager() {
             type: 'list',
             message: 'Would you like to add another team member?',
             name: 'newmember',
-            choices: ['Engineer', 'Intern', 'No Thanks'],
+            choices: ['Engineer', 'Intern', 'Manager', 'No Thanks'],
         }
     ]).then(response => {
+        // needs to create a new manager object
+        // function saveMgr(){
+        //      let newMgr = new Manager();
+        //      console.log(newMgr)
+        // };
         // calls the engineer prompts if the user selects Engineer
         if (response.choices === 'Engineer') {
             promptEngineer();
         // calls the intern prompts if the user selects Intern
         } else if (response.choices === 'Intern') {
             promptIntern();
+        // calls the manager prompts if the user selects Manager
+        } else if (response.choices === 'Manager') {
+            promptManager();
         } else {
-        // needs a No Thanks condition that prints the html
-        }
-    })
-
-        // the html template
-        const HTMLtemplate =
-                `<!-- Bootstrap -->
-                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-                
-                <!-- The Header -->
-                <div class="header"
-                     style="color:white;
-                     font-size: 20px;
-                     background-color:rgb(0, 0, 0);
-                     text-align:center;
-                     padding: 15px;">
-                     <h2>My Team</h2>
-                </div>
-                
-                <!-- The Card(s) -->
-                <div class="card shadow mb-5 mt-5 m-1 bg-white rounded" style="width: 18rem;">
-                    <div class="card-body rounded"
-                         style="background-color:rgb(158, 158, 235);
-                         color:white">
-                      <h4 class="card-title p-1">${response.name}</h4>
-                      <h5 class="card-text">(icon)${response.choices}</h5>
-                    </div>
-                    <ul class="list-group list-group-flush p-3">
-                      <li class="list-group-item">ID: ${response.id}</li>
-                      <li class="list-group-item">Email: ${response.email}</li>
-                      <li class="list-group-item">(office #, github, or school)</li>
-                    </ul>
-                  </div>`
-
-        // writes the HTML template to a new file named "My Team"
-        fs.writeFile('My Team.html', HTMLtemplate, err => {
-             // Logs an error in the terminal if one occurs
-            if (err) console.err(err);
-             // Success message in the terminal
-            else console.log("Success! Your team's contact info has been generated and saved as My Team.html!");
-            })
+        // if the user selects No Thanks, the html file is written
+            let newMgr = new Manager(response.name, response.id, response.email, response.phone);
+            writeIt(response);
         }
     })
 }
 
 // the engineer inquirer prompts
 function promptEngineer() {
-    //const result = await startPrompts();
     return inquirer.prompt([
         {
             type: 'input',
@@ -144,15 +153,22 @@ function promptEngineer() {
             message: 'What is the engineer\'s Github username?',
             name: 'github',
         },
-    ]).then(response =>{
-        console.log(result);
+        {
+            type: 'list',
+            message: 'Would you like to add another team member?',
+            name: 'newmember',
+            choices: ['Engineer', 'Intern', 'Manager', 'No Thanks'],
+        }
+    ]).then(response => {
+        if(response.choices === 'No Thanks'){
+            writeIt();
+        }
         console.log(response);
     })
 }
 
 // the intern inquirer prompts
 function promptIntern() {
-    //const result = await startPrompts();
     return inquirer.prompt([
         {
             type: 'input',
@@ -179,19 +195,19 @@ function promptIntern() {
             message: 'What school did the intern go to?',
             name: 'school',
         },
+        {
+            type: 'list',
+            message: 'Would you like to add another team member?',
+            name: 'newmember',
+            choices: ['Engineer', 'Intern', 'Manager', 'No Thanks'],
+        }
         ]).then(response =>{
-            let school = response.school;
+            if(response.choices === 'No Thanks'){
+                writeIt();
+            }
             console.log(response);
-            console.log(result);
         })
 }
-
-
-        // testing -- 
-        //  const Ryan = new Intern();
-        //  const Darrell = new Engineer();
-        //  const Michael = new Manager();
-        // console.log(Ryan);
 
         // launches the prompts
     function init() {
@@ -199,5 +215,3 @@ function promptIntern() {
         }
 
     init();
-
-        // module.exports = promptManager();
