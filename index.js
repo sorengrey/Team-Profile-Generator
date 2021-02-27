@@ -19,7 +19,7 @@ function writeIt(employeeArray){
     let cardTemplate = '';
     for(i = 0; i < employeeArray.length; i++){
         console.log(employeeArray[i].getRole())
-         cardTemplate = cardTemplate + `<div class="d-flex">
+         cardTemplate = cardTemplate + `<div class="d-flex p-2 justify-content-center">
          <div class="card shadow mb-5 mt-5 m-1 bg-white rounded" style="width: 18rem;">
          <div class="card-body rounded"
             style="background-color:rgb(158, 158, 235);
