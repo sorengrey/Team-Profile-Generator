@@ -11,46 +11,37 @@ const Intern = require('./lib/intern.js');
 const Engineer = require('./lib/engineer.js');
 const Manager = require('./lib/manager.js');
 
-// needs to create a new manager object
- function saveManager(response){
-     let newMgr = new Manager();
-    console.log(newMgr);
- };
+// array
+let employeeArray = [];
 
-// needs to create a new engineer object
-// function saveEngineer(){
-//   let newEng = new Engineer(name, id, email, gitHub);
-//}
-
-// needs to create a new intern object
-    // function saveIntern(){
-    // let newInt = new Intern(name, id, email, school);
-    // }
-// saveIntern();
-
-// writes the HTML template to a new file named "My Team" - needs to run after user is done entering employees
-function writeIt(response){
-    // the html template
-    const cardTemplate =
-        `<div class="card shadow mb-5 mt-5 m-1 bg-white rounded" style="width: 18rem;">
-        <div class="card-body rounded"
+// writes the HTML template to the HTML template file
+function writeIt(employeeArray){
+    let cardTemplate = '';
+    for(i = 0; i < employeeArray.length; i++){
+        console.log(employeeArray[i].getRole())
+         cardTemplate = cardTemplate + `<div class="d-flex">
+         <div class="card shadow mb-5 mt-5 m-1 bg-white rounded" style="width: 18rem;">
+         <div class="card-body rounded"
             style="background-color:rgb(158, 158, 235);
             color:white">
-                <h4 class="card-title p-1">${response.name}</h4>
-                <h5 class="card-text">(icon)${response.role}</h5>
-        </div>
+                <h4 class="card-title p-1">${employeeArray[i].name}</h4>
+                <h5 class="card-text">${employeeArray[i].getRole()}</h5>
+         </div>
             <ul class="list-group list-group-flush p-3">
-                <li class="list-group-item">ID: ${response.id}</li>
-                <a href="mailto: ${response.email}"><li class="list-group-item">Email: ${response.email}</li></a>
-                <li class="list-group-item">(office #, github, or school)</li>
+                <li class="list-group-item">ID: ${employeeArray[i].id}</li>
+                <li class="list-group-item">
+                Email: <a href="mailto: ${employeeArray[i].email}"> ${employeeArray[i].email}</a></li>
+                <li class="list-group-item">${employeeArray[i].getUnique()}</li>
             </ul>
+         </div>
         </div>`
-
-     fs.appendFile('test.html', cardTemplate, err => {
+    }
+   
+     fs.appendFile('./src/template.html', cardTemplate, err => {
      // Logs an error in the terminal if one occurs
-     if (err) console.err(err);
+     if (err) console.log(err);
      // Success message in the terminal
-     else console.log("Success! Your team's contact info has been generated and saved as My Team.html!")})
+     else console.log("Success! Your team's contact info has been generated and saved to template.html!")})
 }
 
 // starts the inquirer prompts and chooses an employee's role
@@ -64,10 +55,10 @@ function startPrompts(){
         }
     ]).then(response => {
         // calls the engineer prompts if the user selects Engineer
-        if (response.choices === 'Engineer') {
+        if (response.role === 'Engineer') {
             promptEngineer();
         // calls the intern prompts if the user selects Intern
-        } else if (response.choices === 'Intern') {
+        } else if (response.role === 'Intern') {
             promptIntern();
         } else promptManager();
         })
@@ -103,24 +94,22 @@ function promptManager() {
             choices: ['Engineer', 'Intern', 'Manager', 'No Thanks'],
         }
     ]).then(response => {
-        // needs to create a new manager object
-        // function saveMgr(){
-        //      let newMgr = new Manager();
-        //      console.log(newMgr)
-        // };
+        // saves the responses into a new object
+        let newMgr = new Manager(response.name, response.id, response.email, response.phone);
+        // adds the new object to the employee array
+        employeeArray.push(newMgr);
         // calls the engineer prompts if the user selects Engineer
-        if (response.choices === 'Engineer') {
+        if (response.newmember === 'Engineer') {
             promptEngineer();
         // calls the intern prompts if the user selects Intern
-        } else if (response.choices === 'Intern') {
+        } else if (response.newmember === 'Intern') {
             promptIntern();
         // calls the manager prompts if the user selects Manager
-        } else if (response.choices === 'Manager') {
+        } else if (response.newmember === 'Manager') {
             promptManager();
         } else {
         // if the user selects No Thanks, the html file is written
-            let newMgr = new Manager(response.name, response.id, response.email, response.phone);
-            writeIt(response);
+            writeIt(employeeArray);
         }
     })
 }
@@ -131,7 +120,7 @@ function promptEngineer() {
         {
             type: 'input',
             message: 'What is the engineer\'s name?',
-            name: 'manager',
+            name: 'name',
         },
         {
             type: 'input',
@@ -145,11 +134,6 @@ function promptEngineer() {
         },
         {
             type: 'input',
-            message: 'What is the team engineer\'s phone number?',
-            name: 'phone',
-        },
-        {
-            type: 'input',
             message: 'What is the engineer\'s Github username?',
             name: 'github',
         },
@@ -160,10 +144,22 @@ function promptEngineer() {
             choices: ['Engineer', 'Intern', 'Manager', 'No Thanks'],
         }
     ]).then(response => {
-        if(response.choices === 'No Thanks'){
-            writeIt();
+        // saves the responses into a new object
+        let newEng = new Engineer(response.name, response.id, response.email, response.github);
+        // adds the new object to the employee array
+        employeeArray.push(newEng);
+        if (response.newmember === 'Engineer') {
+            promptEngineer();
+        // calls the intern prompts if the user selects Intern
+        } else if (response.newmember === 'Intern') {
+            promptIntern();
+        // calls the manager prompts if the user selects Manager
+        } else if (response.newmember === 'Manager') {
+            promptManager();
+        } else {
+        // if the user selects No Thanks, the html file is written
+        writeIt(employeeArray);
         }
-        console.log(response);
     })
 }
 
@@ -173,7 +169,7 @@ function promptIntern() {
         {
             type: 'input',
             message: 'What is the intern\'s name?',
-            name: 'manager',
+            name: 'name',
         },
         {
             type: 'input',
@@ -187,11 +183,6 @@ function promptIntern() {
         },
         {
             type: 'input',
-            message: 'What is the intern\'s phone number?',
-            name: 'phone',
-        },
-        {
-            type: 'input',
             message: 'What school did the intern go to?',
             name: 'school',
         },
@@ -202,16 +193,28 @@ function promptIntern() {
             choices: ['Engineer', 'Intern', 'Manager', 'No Thanks'],
         }
         ]).then(response =>{
-            if(response.choices === 'No Thanks'){
-                writeIt();
+            // saves the responses into a new object
+            let newInt = new Intern(response.name, response.id, response.email, response.school);
+            // adds the new object to the employee array
+            employeeArray.push(newInt);
+            if (response.newmember === 'Engineer') {
+                promptEngineer();
+            // calls the intern prompts if the user selects Intern
+            } else if (response.newmember === 'Intern') {
+                promptIntern();
+            // calls the manager prompts if the user selects Manager
+            } else if (response.newmember === 'Manager') {
+                promptManager();
+            } else {
+            // if the user selects No Thanks, the html file is written
+                writeIt(employeeArray);
             }
-            console.log(response);
         })
 }
 
-        // launches the prompts
-    function init() {
-            startPrompts();
-        }
+// launches the prompts
+function init() {
+    startPrompts();
+}
 
-    init();
+init();
