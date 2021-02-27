@@ -8,7 +8,7 @@ A CLI program that creates profile cards for a team with contact information abo
 ### Description
 This project gives the user a quick and easy way to create a webpage displaying their team's contact info. It runs in the terminal, asking the user questions about each team member.
 <br>
-There are three categories of employee. Manager, Engineer, and Intern. Each type of employee has a unique piece of info. Managers have an office number. Engineers have a Github. And Interns have a school listed.
+There are three categories of employee: Manager, Engineer, and Intern. Each type of employee has a unique piece of information. Managers have an office number. Engineers have a link to their Github. And Interns have a school listed.
 <br>
 When the answers are completed, the HTML template is filled out and the contact information is displayed for easy reference.
 
@@ -27,7 +27,7 @@ How to install: This project requires .fs, .jest and .inquirer. Please refer to 
 Please contact me before contributing.
 
 ### Tests <a name="Tests"></a>
-See package.json for Jest testing.
+Tests can be run by entering "run npm test" into the terminal. See package.json for more testing info.
 
 ### License <a name="License"></a>
 This project is licensed under MIT. For more information about this license, visit [opensource.org](http://www.opensource.org).
