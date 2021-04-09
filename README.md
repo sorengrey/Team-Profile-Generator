@@ -1,4 +1,4 @@
-# Team-Profile-Generator ![License](https://img.shields.io/badge/License-MIT-blue.svg)
+# Team-Profile-Generator 
 
 A CLI program that creates profile cards for a team with contact information about each member.
 
