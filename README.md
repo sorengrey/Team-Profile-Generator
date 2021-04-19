@@ -2,7 +2,7 @@
 
 A CLI program that creates profile cards for a team with contact information about each member.
 
-![screenshot of portfolio website](./src/screenshot.png?raw=true "screenshot of generated contact info")
+![screenshot of website](./src/screenshot.png?raw=true "screenshot of generated contact info")
 [Click here for a video walkthrough.](https://drive.google.com/file/d/1qE-Zrs344kqTbqI--UQsE-3cQNJh4DmW/view?usp=sharing)<br><br>
 
 ### Description
